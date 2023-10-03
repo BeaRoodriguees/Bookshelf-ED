@@ -1,0 +1,5 @@
+# Exclude file with no extension
+!*.*
+
+# Exclude .exe file
+*.exe
