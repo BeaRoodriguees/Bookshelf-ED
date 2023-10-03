@@ -38,14 +38,10 @@ typedef struct bookshelf{
 "Roberta está reorganizando suas estantes de livros. Ela pega os livros das prateleiras mais altas para as mais baixas, das estantes mais à esquerda para as estantes mais à direita. Assumindo que todos os livros têm a mesma profundidade. O formato da entrada dos livros considera que os caracteres '/' e '\', indicam respectivamente quando uma prateleira inicia e quando ela termina. Considere que cada estante com 90cm tem no máximo 6 prateleiras. Imprima apenas uma string exibindo a sequência das prateleiras e estantes após o rearranjo."
 
 
-1. A Estante - HashTable?
-/ livro1, livro2, livro2, livro4 \
-/ livro5, livro6, livro7, livro8, livro9, livro10 \
-/ livro11 \
-/ \
-/ \
-/ \
-
-int  usedWidth;
-
-```
+1. A Estante - HashTable
+/ As Crônicas de Roberta, Roberta Lopes, IC, 2023, 31244, 2.21; As Aventuras de Willy e Paes, Monitores de P1, IC, 2020, 31212, 4.72; Chuva de Bençãos: A Alegria de Calculo 2, Diego Chicuta, 2023, 546495, 3.55 \
+/ Desconectado, Wifi, UFAL, 2012, 121112, 2.101; Já Pode Almoçar?, Alunos IC, 2023, 1257, 2.41 \
+/ Socorro Deus!, Beatriz Rodrigues, 2023, 6132845, 6.1 \
+/\
+/\
+/\
