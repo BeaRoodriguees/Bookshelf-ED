@@ -3,13 +3,13 @@
 #include <stdlib.h>
 
 #define MAX_LEN 100
-#define DEBUG if(1)
+#define DEBUG if(0)
 
 typedef struct book{
     char title[MAX_LEN];
     char autor[MAX_LEN];
     char publisher[MAX_LEN];
-    int ano;
+    int edition;
     int isbn;
     double width; // Em cm
 } book;
@@ -29,13 +29,13 @@ collection *create_collection(){
     return NULL;
 }
 
-book *create_book (char *title, char *autor, char *publisher, int ano, int isbn, double width){
+book *create_book (char *title, char *autor, char *publisher, int edition, int isbn, double width){
     book *new_book = malloc(sizeof(book));
     
     strcpy(new_book->title, title);
     strcpy(new_book->autor, autor);
     strcpy(new_book->publisher, publisher);
-    new_book->ano = ano;
+    new_book->edition = edition;
     new_book->isbn = isbn;
     new_book->width = width;
 
@@ -125,12 +125,12 @@ collection *removeCollection(collection *head, int wantedBook){
     return head;
 }
 
-void print(collection *head)
+void printColecao(collection *head)
 {
     while (head != NULL)
     {
         printf("title: %s\nAutor: %s\nEditora: %s\n", head->elem->title, head->elem->autor, head->elem->publisher);
-        printf("Ano: %d\nIMBS: %d\nQnt: %d\n", head->elem->ano, head->elem->isbn, head->qnt_local);
+        printf("edition: %d\nIMBS: %d\nQnt: %d\n", head->elem->edition, head->elem->isbn, head->qnt_local);
         
         head = head->next;
         printf("\n");
@@ -145,42 +145,42 @@ int main()
     char title[MAX_LEN]; strcpy(title, "As Cronicas de Roberta");
     char autor[MAX_LEN]; strcpy(autor, "Roberta Lopes");
     char publisher[MAX_LEN]; strcpy(publisher, "IC");
-    int ano = 2023;
+    int edition = 2023;
     int isbn = 31244;
 
-    book *livroTeste = create_book(title, autor, publisher, ano, isbn);
+    book *livroTeste = create_book(title, autor, publisher, edition, isbn);
 
     DEBUG{ // Criação
         printf("Teste de criação de livro\n");
-        print(teste);
+        printColecao(teste);
         teste = addNew(teste, livroTeste, 10);
-        print(teste);
+        printColecao(teste);
     }
 
     title[MAX_LEN]; strcpy(title, "As Aventuras de Willy e Paes");
     autor[MAX_LEN]; strcpy(autor, "Monitores de P1");
     publisher[MAX_LEN]; strcpy(publisher, "IC");
-    ano = 2023; 
+    edition = 2023; 
     isbn = 31212;
 
     DEBUG{ // Compra
         printf("Teste de compra de livro\n");
         teste = purchaseBooks(teste, livroTeste, 7);
-        livroTeste = create_book(title, autor, publisher, ano, isbn);
+        livroTeste = create_book(title, autor, publisher, edition, isbn);
         teste = purchaseBooks(teste, livroTeste, 15);
-        print(teste);
+        printColecao(teste);
     }
 
     DEBUG{ // Emprestimo
         printf("Teste de emprestimo de livro\n");
         teste = lendBooks(teste, livroTeste->isbn);
-        print(teste);
+        printColecao(teste);
     }
 
     DEBUG{ // Remoção
         printf("Teste de remoção de livro\n");
         teste = removecollection(teste, livroTeste->isbn);
-        print(teste);
+        printColecao(teste);
     }
 
     return 0;

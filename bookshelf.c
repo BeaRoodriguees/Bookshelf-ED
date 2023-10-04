@@ -9,19 +9,21 @@
 
 typedef struct shelf {
     int key;
-    int actualWidth;
     book *book;
     struct shelf *next;
 } Shelf;
 
 typedef struct bookshelf {
     Shelf *table[QNT];
+    double actualWidth[QNT];
 } bs;
 
 bs *create_bs(){
     bs *newBs = malloc(sizeof(bs));
-    for(int i = 0; i < QNT; i++)
+    for(int i = 0; i < QNT; i++){
         newBs->table[i] = NULL;
+        newBs->actualWidth[i] = 0;
+    }
     return newBs;
 }
 
@@ -48,7 +50,7 @@ void put(bs *bs, int key, book *book){
     }
 }
 
-book *get(bs *bs, int key){
+book *getBook(bs *bs, int key){
     int h = key % QNT;
     Shelf *curr = bs->table[h];
     while (curr != NULL) {
@@ -79,10 +81,11 @@ void freeTable(bs *bs, int key){
 
 void printTable(bs *bs) {
     for (int i = 0; i < QNT; i++) {
-        printf("Self %d: ", i+1);
+        printf("Shelf %d: ", i+1);
         Shelf *curr = bs->table[i];
         while (curr != NULL) {
             printf("(%d, %s) ", curr->key, curr->book->title);
+            // printf("(%d, %.3lf) ", curr->key, curr->book->width);
             curr = curr->next;
         }
         printf("\n");
@@ -90,7 +93,7 @@ void printTable(bs *bs) {
 }
 
 void inputBooks(bs *books){
-    FILE *readInput = fopen("input.txt", "r");
+    FILE *readInput = fopen("data/library.txt", "r");
 
     if (readInput == NULL){
         printf("Erro ao abrir o arquivo.\n");
@@ -139,6 +142,7 @@ void inputBooks(bs *books){
         double width;
        
         while (portion != NULL) {
+            DEBUG printf("j-%d i-%d: %s\n", j, i, portion);
             switch (i)
             {
                 case 1:
@@ -166,8 +170,10 @@ void inputBooks(bs *books){
                     i++;
                 case 7:
                     i = 1;
+                    // printf("largura %d: %.2lf\n", j, width);
                     book *newBook = create_book(title, autor, publisher, ano, isbn, width);
                     put(books, j * QNT + shelf, newBook);
+                    books->actualWidth[shelf] += width;
                     j++;
                 break;
             }
@@ -179,19 +185,36 @@ void inputBooks(bs *books){
         if(i == 6){
             book *newBook = create_book(title, autor, publisher, ano, isbn, width);
             put(books, j* QNT + shelf, newBook);
+            books->actualWidth[shelf] += width;
         }
-
     }
 
     fclose(readInput);
 }
 
+void printBook(bs *bs, int key){
+    book *book = getBook(bs, key);
+    if (book != NULL) {
+        printf("Title: %s\n", book->title);
+        printf("Autor: %s\n", book->autor);
+        printf("Publisher: %s\n", book->publisher);
+        printf("Edition: %d\n", book->edition);
+        printf("ISBN: %d\n", book->isbn);
+        printf("Width: %.2lf\n", book->width);
+    } else {
+        printf("Book not found.\n");
+    }
+}
+
+bs *sortTable(bs *bs){
+    
+}
+
 int main(){
     bs *bs = create_bs(); // Cria uma estante
 
-    // ler o arquivo e colocar na estante
-    inputBooks(bs);
-    printTable(bs);
+    inputBooks(bs); // ler o arquivo e colocar na estante
+    printTable(bs); // printar a estante
 
     return 0;
 }
