@@ -166,11 +166,10 @@ void printBook(bs *bs, int key){
 
 void printTable(bs *bs) {
     for (int i = 0; i < QNT; i++) {
-        printf("Shelf %d: ", i+1);
+        printf("Shelf %d - %.2lf cm: ", i+1, bs->actualWidth[i]);
         Shelf *curr = bs->table[i];
         while (curr != NULL) {
-            printf("(%d, %s) ", curr->key, curr->book->title);
-            // printf("(%d, %.3lf) ", curr->key, curr->book->width);
+            printf("(%d, %s, %.3lf) ", curr->key, curr->book->title, curr->book->width);;
             curr = curr->next;
         }
         printf("\n");
@@ -178,7 +177,7 @@ void printTable(bs *bs) {
     printf("\n");
 }
 
-// Simular tirar os livros da estante para reorganizar //  Tirando os livros da estante e colocando-os lista encadeada
+// Simular tirar os livros da estante para reorganizar --  Tirando os livros da estante e colocando-os lista encadeada
 Shelf *putBox (bs *original){
     Shelf *all = NULL;
 
@@ -196,6 +195,7 @@ Shelf *putBox (bs *original){
     return all; 
 }
 
+// ORDENAÇÃO ALFABÉTICA CONSIDERANDO TODAS AS LETRAS
 bs *sortAlphaTable(bs *original){
     bs *sorted = create_bs();
     Shelf *all = putBox(original);
@@ -236,13 +236,139 @@ bs *sortAlphaTable(bs *original){
     return sorted;
 }
 
+// ORDENAÇÃO ALGABÉTICA CONSIDERANDO APENAS A PRIMEIRA LETRA
+bs *sortFistLetter(bs *original){
+    bs *sorted = create_bs();
+    Shelf *all = putBox(original); // Tira todos os livros da estante
+    
+    // Ordenar Lista Encadeada -- Selection Sort  
+    Shelf *curr = all;
+    int j = 0;
+    while(curr != NULL){
+        Shelf *min = curr;
+        Shelf *aux = curr->next;
+
+        while(aux != NULL){
+            if(min->book->title[0] > aux->book->title[0])
+                min = aux;
+            aux = aux->next;
+        }
+
+        if(min != curr){
+            book *temp = curr->book;
+            curr->book = min->book;
+            min->book = temp;
+        }
+
+        curr = curr->next;
+    }
+    
+    // Colocar os livros na estante
+    for (int shelf = 0; shelf < QNT; shelf++){
+        j = 0;
+        while(all != NULL && sorted->actualWidth[shelf] + all->book->width < 90){  
+            sorted->actualWidth[shelf] += all->book->width;
+            put(sorted, j * QNT + shelf, all->book);
+            j++;
+            all = all->next;
+        }
+    } 
+
+    return sorted;
+}
+
+// ORDENAÇÃO POR LARGURA
+bs *sortWidth(bs *original){
+    bs *sorted = create_bs();
+    Shelf *all = putBox(original); // Tira todos os livros da estante
+    
+    // Ordenar Lista Encadeada -- Selection Sort  
+    Shelf *curr = all;
+    int j = 0;
+    while(curr != NULL){
+        Shelf *min = curr;
+        Shelf *aux = curr->next;
+
+        while(aux != NULL){
+            if(min->book->width > aux->book->width)
+                min = aux;
+            aux = aux->next;
+        }
+
+        if(min != curr){
+            book *temp = curr->book;
+            curr->book = min->book;
+            min->book = temp;
+        }
+        curr = curr->next;
+    }
+    
+    // Colocar os livros na estante
+    for (int shelf = 0; shelf < QNT; shelf++){
+        j = 0;
+        while(all != NULL && sorted->actualWidth[shelf] + all->book->width < 90){  
+            sorted->actualWidth[shelf] += all->book->width;
+            put(sorted, j * QNT + shelf, all->book);
+            j++;
+            all = all->next;
+        }
+    } 
+
+    return sorted;
+}
+
+// ORDENAÇÃO POR PRIMEIRA LETRA E LARGURA
+bs *sortAlphaWidth(bs *original){
+    bs *sorted = create_bs();
+    Shelf *all = putBox(original); // Tira todos os livros da estante
+    
+    // Ordenar Lista Encadeada -- Selection Sort  
+    Shelf *curr = all;
+    int j = 0;
+    while(curr != NULL){
+        Shelf *min = curr;
+        Shelf *aux = curr->next;
+
+        while(aux != NULL){
+            if(min->book->title[0] > aux->book->title[0])
+                min = aux;
+            else if (min->book->title[0] == aux->book->title[0] && min->book->width > aux->book->width)
+                min = aux;
+            aux = aux->next;
+        }
+
+        if(min != curr){
+            book *temp = curr->book;
+            curr->book = min->book;
+            min->book = temp;
+        }
+
+        curr = curr->next;
+    }
+    
+    // Colocar os livros na estante
+    for (int shelf = 0; shelf < QNT; shelf++){
+        j = 0;
+        while(all != NULL && sorted->actualWidth[shelf] + all->book->width < 90){  
+            sorted->actualWidth[shelf] += all->book->width;
+            put(sorted, j * QNT + shelf, all->book);
+            j++;
+            all = all->next;
+        }
+    } 
+
+    return sorted;
+}
+
 int main(){
     bs *bs = create_bs(); // Cria uma estante
 
+    printf("Estante Original:\n");
     inputBooks(bs); // ler o arquivo e colocar na estante
-    //printTable(bs); 
+    printTable(bs); 
 
-    bs = sortAlphaTable(bs);
+    printf("Estante Ordenada Alfabeticamente:\n");
+    bs = sortAlphaWidth(bs);
     printTable(bs); 
 
     return 0;
