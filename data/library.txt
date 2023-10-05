@@ -1,6 +1,6 @@
-/As Crônicas de Roberta,Roberta Lopes,IC,2023,31244,2.21;As Aventuras de Willy e Paes,Monitores de P1,IC,2020,31212,4.72;Chuva de Bençãos: A Alegria do Calculo 2,Diego Chicuta,IM,2023,546495,3.55\
-/Desconectado,Wifi,UFAL,2012,121112,2.101;Já Pode Almoçar?,Alunos,IC,2023,1257,2.41\
-/Socorro Deus!,Beatriz Rodrigues,OTB,2023,6132845,6.1\ 
-/\ 
-/Zeus e os Deuses do Olimpo,Beatriz Rodrigues,OTB,2021,7854245,61.1\
-/Pequenos Heróis, Hugo Coêlho,OTB,2022,7968532,3.83\
+/Programação para Dispositivos Móveis,Paulo Santos,IC,2023,901234,29.5;Introdução à Criptografia,João Silva,IC,2023,123456,24.53\
+/\
+/Computação Quântica,Ana Souza,IC,2022,789012,55.56;Introdução à Bioinformática,Carlos Santos,IC,2022,567890,58.59\
+/Computação Científica,Julia Oliveira,IC,2023,901234,11.62;Introdução à Teoria dos Jogos,Paulo Santos,IC,2023,123456,64.65\
+/Programação Funcional,João Silva,IC,2022,789012,37.68;Introdução à Lógica Matemática,Ana Souza,IC,2022,567890,70.71\
+/\
