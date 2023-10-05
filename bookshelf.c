@@ -129,7 +129,6 @@ void inputBooks(bs *books){
                     i++;
                 case 7:
                     i = 1;
-                    // printf("largura %d: %.2lf\n", j, width);
                     book *newBook = create_book(title, autor, publisher, ano, isbn, width);
                     put(books, j * QNT + shelf, newBook);
                     books->actualWidth[shelf] += width;
@@ -176,10 +175,10 @@ void printTable(bs *bs) {
         }
         printf("\n");
     }
+    printf("\n");
 }
 
-// Simular tirar os livros da estante para reorganizar
-// Tirando os livros da estante e colocando-os lista encadeada
+// Simular tirar os livros da estante para reorganizar //  Tirando os livros da estante e colocando-os lista encadeada
 Shelf *putBox (bs *original){
     Shelf *all = NULL;
 
@@ -201,17 +200,16 @@ bs *sortAlphaTable(bs *original){
     bs *sorted = create_bs();
     Shelf *all = putBox(original);
     
-    // Ordenar Lista Encadeada -- Selection Sort
-
-    //Tá dando erro aqui -- Ta perdendo o NULL
+    // Ordenar Lista Encadeada -- Selection Sort  
     Shelf *curr = all;
+    int j = 0;
     while(curr != NULL){
         Shelf *min = curr;
         Shelf *aux = curr->next;
+
         while(aux != NULL){
-            if(strcmp(min->book->title, aux->book->title) > 0){
+            if(strcmp(min->book->title, aux->book->title) > 0)
                 min = aux;
-            }
             aux = aux->next;
         }
 
@@ -223,57 +221,26 @@ bs *sortAlphaTable(bs *original){
 
         curr = curr->next;
     }
-
+    
     // Colocar os livros na estante
-    for (int shelf = 0, j = 0; shelf < QNT; shelf++){
-        while (sorted->actualWidth[shelf] + all->book->width < 90 && all != NULL) {
-            printf("%s\n", all->book->title);
-            put(sorted, j * QNT + shelf, all->book);
+    for (int shelf = 0; shelf < QNT; shelf++){
+        j = 0;
+        while(all != NULL && sorted->actualWidth[shelf] + all->book->width < 90){  
             sorted->actualWidth[shelf] += all->book->width;
-            all = all->next;
+            put(sorted, j * QNT + shelf, all->book);
             j++;
+            all = all->next;
         }
-    }    
+    } 
 
     return sorted;
 }
-
-/* 
-int bubbleSort(struct Node** head, int count)
-{
-    struct Node** h;
-    int i, j, swapped;
- 
-    for (i = 0; i <= count; i++) {
-        h = head;
-        swapped = 0;
- 
-        for (j = 0; j < count - i - 1; j++) {
- 
-            struct Node* p1 = *h;
-            struct Node* p2 = p1->next;
- 
-            if (p1->data > p2->data) {
- 
-                *h = swap(p1, p2);
-                swapped = 1;
-            }
- 
-            h = &(*h)->next;
-        }
- 
-        // break if the loop ended without any swap
-        if (swapped == 0)
-            break;
-    }
-}
- */
 
 int main(){
     bs *bs = create_bs(); // Cria uma estante
 
     inputBooks(bs); // ler o arquivo e colocar na estante
-    //printTable(bs); // printar a estante
+    //printTable(bs); 
 
     bs = sortAlphaTable(bs);
     printTable(bs); 
