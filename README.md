@@ -20,14 +20,15 @@ typedef struct book{
 ## A Estante
 As barras marcam o inicio e o fim de uma prateleirae a estante é uma HashTable, onde cada prateleira é uma lista encadeada. Cada livro é separado do outro por um ponto e vírgula (;).
 
-    / As Crônicas de Roberta, Roberta Lopes, IC, 2023, 31244, 2.21; As Aventuras de Willy e Paes, Monitores de P1, IC, 2020, 31212, 4.72; Chuva de Bençãos: A Alegria de Calculo 2, Diego Chicuta, 2023, 546495, 3.55 \
-    / Desconectado, Wifi, UFAL, 2012, 121112, 2.101; Já Pode Almoçar?, Alunos IC, 2023, 1257, 2.41 \
-    / Socorro Deus!, Beatriz Rodrigues, 2023, 6132845, 6.1 \
+    /As Crônicas de Roberta,Roberta Lopes,IC,2023,31244,2.21;As Aventuras de Willy e Paes,Monitores de P1,IC,2020,31212,4.72;Chuva de Bençãos: A Alegria do Calculo 2,Diego Chicuta,IM,2023,546495,3.55\
+    /Desconectado,Wifi,UFAL,2012,121112,2.101;Já Pode Almoçar?,Alunos,IC,2023,1257,2.41\
+    /Socorro Deus!,Beatriz Rodrigues,OTB,2023,6132845,6.1\
     /\
     /\
-    /\
+    /Pequenos Heróis, Hugo Coêlho,OTB,2022,7968532,3.83\
+
 
 ## Ordenação
 Critérios: 
- - Autor: Por Ordem alfabética
+ - Autor: Por ordem alfabética (Considerando a primeira letra)
  - Altura: Da maior para a menor

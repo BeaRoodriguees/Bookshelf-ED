@@ -3,9 +3,9 @@
 #include <stdlib.h>
 
 #define MAX_LEN 100
-#define DEBUG if(0)
+#define TESTE if(0)
 
-typedef struct book{
+typedef struct {
     char title[MAX_LEN];
     char autor[MAX_LEN];
     char publisher[MAX_LEN];
@@ -150,7 +150,7 @@ int main()
 
     book *livroTeste = create_book(title, autor, publisher, edition, isbn);
 
-    DEBUG{ // Criação
+    TESTE{ // Criação
         printf("Teste de criação de livro\n");
         printColecao(teste);
         teste = addNew(teste, livroTeste, 10);
@@ -163,7 +163,7 @@ int main()
     edition = 2023; 
     isbn = 31212;
 
-    DEBUG{ // Compra
+    TESTE{ // Compra
         printf("Teste de compra de livro\n");
         teste = purchaseBooks(teste, livroTeste, 7);
         livroTeste = create_book(title, autor, publisher, edition, isbn);
@@ -171,13 +171,13 @@ int main()
         printColecao(teste);
     }
 
-    DEBUG{ // Emprestimo
+    TESTE{ // Emprestimo
         printf("Teste de emprestimo de livro\n");
         teste = lendBooks(teste, livroTeste->isbn);
         printColecao(teste);
     }
 
-    DEBUG{ // Remoção
+    TESTE{ // Remoção
         printf("Teste de remoção de livro\n");
         teste = removecollection(teste, livroTeste->isbn);
         printColecao(teste);
