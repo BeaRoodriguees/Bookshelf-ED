@@ -1,5 +1,5 @@
 # Livaria
-Projeto para um sistema de alocação de livros.
+Projeto para organização de uma estante de livros.
 
 ## Estruturas
 ```c
