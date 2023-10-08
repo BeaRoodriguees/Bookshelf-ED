@@ -7,7 +7,6 @@
 #define MAX_WIDTH 90
 #define MAX_LEN 100
 
-
 typedef struct jeej {
     char title[MAX_LEN];
     char autor[MAX_LEN];
