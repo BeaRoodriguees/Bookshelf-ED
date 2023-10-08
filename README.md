@@ -14,7 +14,7 @@ typedef struct book{
 ```
 
 # ORGANIZAR A ESTANTE
-"Roberta está reorganizando suas estantes de livros. Ela pega os livros das prateleiras mais altas para as mais baixas, das estantes mais à esquerda para as estantes mais à direita. Assume-se que todos os livros têm a mesma profundidade. O formato da entrada dos livros considera que os caracteres '/' e '\', indicam respectivamente quando uma prateleira inicia e quando ela termina. Considere que cada estante com 90 cm tem no máximo 6 prateleiras. Imprima apenas uma string exibindo a sequência das prateleiras e estantes após o rearranjo."
+"Roberta está reorganizando suas estantes de livros. Ela pega os livros das prateleiras mais altas para as mais baixas, das estantes mais à esquerda para as estantes mais à direita. Assume-se que todos os livros têm a mesma profundidade. O formato da entrada dos livros considera que os caracteres '/' e '\\', indicam respectivamente quando uma prateleira inicia e quando ela termina. Considere que cada estante com 90 cm tem no máximo 6 prateleiras. Imprima apenas uma string exibindo a sequência das prateleiras e estantes após o rearranjo."
 
 
 ## A Estante

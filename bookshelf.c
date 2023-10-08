@@ -1,12 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "library.c"
 
-#define QNT 6
 #define DEBUG if(1)
+#define QNT 6
+#define MAX_WIDTH 90
+#define MAX_LEN 100
 
-// Depois ver o como fazer com várias estantes
+
+typedef struct jeej {
+    char title[MAX_LEN];
+    char autor[MAX_LEN];
+    char publisher[MAX_LEN];
+    int edition;
+    int isbn;
+    double width; // Em cm
+} book;
 
 typedef struct shelf {
     int key;
@@ -19,6 +28,11 @@ typedef struct bookshelf {
     double actualWidth[QNT];
 } bs;
 
+typedef struct library{
+    bs *bookshelfs;
+    struct library *next;
+} lib;
+
 bs *create_bs(){
     bs *newBs = malloc(sizeof(bs));
     for(int i = 0; i < QNT; i++){
@@ -26,6 +40,19 @@ bs *create_bs(){
         newBs->actualWidth[i] = 0;
     }
     return newBs;
+}
+
+book *create_book (char *title, char *autor, char *publisher, int edition, int isbn, double width){
+    book *new_book = malloc(sizeof(book));
+    
+    strcpy(new_book->title, title);
+    strcpy(new_book->autor, autor);
+    strcpy(new_book->publisher, publisher);
+    new_book->edition = edition;
+    new_book->isbn = isbn;
+    new_book->width = width;
+
+    return new_book;
 }
 
 void put(bs *bs, int key, book *book){
@@ -80,74 +107,88 @@ void freeTable(bs *bs, int key){
     }
 }
 
-void inputBooks(bs *books){
+lib *addShelf(lib *library, bs *bookshelf){
+    lib *newLib = malloc(sizeof(lib));
+    newLib->bookshelfs = bookshelf;
+    newLib->next = library;
+    return newLib;
+}
+
+lib *inputBooks(lib *library){ 
     FILE *readInput = fopen("data/library.txt", "r");
 
     if (readInput == NULL){
         printf("Erro ao abrir o arquivo.\n");
-        return;
+        return library;
     }
 
-    int shelf = -1;
-    char *line = malloc(sizeof(char)*1000);
-    char tokens[] = "/\\,;"; //tokens para separar as informações do livro
+    while(feof(readInput) == 0){
+        bs *books = create_bs();
 
-    while (shelf++ < QNT)
-    {
-        fscanf(readInput, "%[^\n]", line);
-        fgetc(readInput); // Para ler o \n
+        int shelf = -1;
+        char *line = malloc(sizeof(char)*1000);
+        char tokens[] = "/\\,;"; //tokens para separar as informações do livro
+        
+        while (shelf++ < QNT)
+        {
+            fscanf(readInput, "%[^\n]", line);
+            fgetc(readInput); // Para ler o \n
 
-        char *portion = strtok(line, tokens);
-        char title[100], autor[100], publisher[100];
-        int ano, isbn, i = 1, j = 0;
-        double width;
-       
-        while (portion != NULL) {
-            switch (i) {
-                case 1:
-                    strcpy(title, portion);
-                    i++;
+            char *portion = strtok(line, tokens);
+            char title[100], autor[100], publisher[100];
+            int ano, isbn, i = 1, j = 0;
+            double width;
+        
+            while (portion != NULL) {
+                switch (i) {
+                    case 1:
+                        strcpy(title, portion);
+                        i++;
+                        break;
+                    case 2:
+                        strcpy(autor, portion);
+                        i++;
+                        break;
+                    case 3:
+                        strcpy(publisher, portion);
+                        i++;
+                        break;
+                    case 4:
+                        ano = atoi(portion);
+                        i++;
+                        break;
+                    case 5:
+                        isbn = atoi(portion);
+                        i++;
+                        break;
+                    case 6:
+                        width = atof(portion);
+                        i++;
+                    case 7:
+                        i = 1;
+                        book *newBook = create_book(title, autor, publisher, ano, isbn, width);
+                        put(books, j * QNT + shelf, newBook);
+                        books->actualWidth[shelf] += width;
+                        j++;
                     break;
-                case 2:
-                    strcpy(autor, portion);
-                    i++;
-                    break;
-                case 3:
-                    strcpy(publisher, portion);
-                    i++;
-                    break;
-                case 4:
-                    ano = atoi(portion);
-                    i++;
-                    break;
-                case 5:
-                    isbn = atoi(portion);
-                    i++;
-                    break;
-                case 6:
-                    width = atof(portion);
-                    i++;
-                case 7:
-                    i = 1;
-                    book *newBook = create_book(title, autor, publisher, ano, isbn, width);
-                    put(books, j * QNT + shelf, newBook);
-                    books->actualWidth[shelf] += width;
-                    j++;
-                break;
+                }
+                
+                portion = strtok(NULL, tokens);
             }
-            
-            portion = strtok(NULL, tokens);
+        
+            // Para o último livro da estante
+            if(i == 6){
+                book *newBook = create_book(title, autor, publisher, ano, isbn, width);
+                put(books, j* QNT + shelf, newBook);
+                books->actualWidth[shelf] += width;
+            }
         }
-       
-        // Para o último livro da estante
-        if(i == 6){
-            book *newBook = create_book(title, autor, publisher, ano, isbn, width);
-            put(books, j* QNT + shelf, newBook);
-            books->actualWidth[shelf] += width;
-        }
-    }
+
+        library = addShelf(library, books);
+    }  
 
     fclose(readInput);
+    return library;
 }
 
 void printBook(bs *bs, int key){
@@ -164,7 +205,7 @@ void printBook(bs *bs, int key){
     }
 }
 
-void printTable(bs *bs) {
+void printShelf(bs *bs) {
     for (int i = 0; i < QNT; i++) {
         printf("Shelf %d - %.2lf cm: ", i+1, bs->actualWidth[i]);
         Shelf *curr = bs->table[i];
@@ -195,129 +236,7 @@ Shelf *putBox (bs *original){
     return all; 
 }
 
-// ORDENAÇÃO ALFABÉTICA CONSIDERANDO TODAS AS LETRAS
-bs *sortAlphaTable(bs *original){
-    bs *sorted = create_bs();
-    Shelf *all = putBox(original);
-    
-    // Ordenar Lista Encadeada -- Selection Sort  
-    Shelf *curr = all;
-    int j = 0;
-    while(curr != NULL){
-        Shelf *min = curr;
-        Shelf *aux = curr->next;
-
-        while(aux != NULL){
-            if(strcmp(min->book->title, aux->book->title) > 0)
-                min = aux;
-            aux = aux->next;
-        }
-
-        if(min != curr){
-            book *temp = curr->book;
-            curr->book = min->book;
-            min->book = temp;
-        }
-
-        curr = curr->next;
-    }
-    
-    // Colocar os livros na estante
-    for (int shelf = 0; shelf < QNT; shelf++){
-        j = 0;
-        while(all != NULL && sorted->actualWidth[shelf] + all->book->width < 90){  
-            sorted->actualWidth[shelf] += all->book->width;
-            put(sorted, j * QNT + shelf, all->book);
-            j++;
-            all = all->next;
-        }
-    } 
-
-    return sorted;
-}
-
-// ORDENAÇÃO ALGABÉTICA CONSIDERANDO APENAS A PRIMEIRA LETRA
-bs *sortFistLetter(bs *original){
-    bs *sorted = create_bs();
-    Shelf *all = putBox(original); // Tira todos os livros da estante
-    
-    // Ordenar Lista Encadeada -- Selection Sort  
-    Shelf *curr = all;
-    int j = 0;
-    while(curr != NULL){
-        Shelf *min = curr;
-        Shelf *aux = curr->next;
-
-        while(aux != NULL){
-            if(min->book->title[0] > aux->book->title[0])
-                min = aux;
-            aux = aux->next;
-        }
-
-        if(min != curr){
-            book *temp = curr->book;
-            curr->book = min->book;
-            min->book = temp;
-        }
-
-        curr = curr->next;
-    }
-    
-    // Colocar os livros na estante
-    for (int shelf = 0; shelf < QNT; shelf++){
-        j = 0;
-        while(all != NULL && sorted->actualWidth[shelf] + all->book->width < 90){  
-            sorted->actualWidth[shelf] += all->book->width;
-            put(sorted, j * QNT + shelf, all->book);
-            j++;
-            all = all->next;
-        }
-    } 
-
-    return sorted;
-}
-
-// ORDENAÇÃO POR LARGURA
-bs *sortWidth(bs *original){
-    bs *sorted = create_bs();
-    Shelf *all = putBox(original); // Tira todos os livros da estante
-    
-    // Ordenar Lista Encadeada -- Selection Sort  
-    Shelf *curr = all;
-    int j = 0;
-    while(curr != NULL){
-        Shelf *min = curr;
-        Shelf *aux = curr->next;
-
-        while(aux != NULL){
-            if(min->book->width > aux->book->width)
-                min = aux;
-            aux = aux->next;
-        }
-
-        if(min != curr){
-            book *temp = curr->book;
-            curr->book = min->book;
-            min->book = temp;
-        }
-        curr = curr->next;
-    }
-    
-    // Colocar os livros na estante
-    for (int shelf = 0; shelf < QNT; shelf++){
-        j = 0;
-        while(all != NULL && sorted->actualWidth[shelf] + all->book->width < 90){  
-            sorted->actualWidth[shelf] += all->book->width;
-            put(sorted, j * QNT + shelf, all->book);
-            j++;
-            all = all->next;
-        }
-    } 
-
-    return sorted;
-}
-
-// ORDENAÇÃO POR PRIMEIRA LETRA E LARGURA
+// Ordenação Alfabética e por Largura
 bs *sortAlphaWidth(bs *original){
     bs *sorted = create_bs();
     Shelf *all = putBox(original); // Tira todos os livros da estante
@@ -349,7 +268,7 @@ bs *sortAlphaWidth(bs *original){
     // Colocar os livros na estante
     for (int shelf = 0; shelf < QNT; shelf++){
         j = 0;
-        while(all != NULL && sorted->actualWidth[shelf] + all->book->width < 90){  
+        while(all != NULL && sorted->actualWidth[shelf] + all->book->width < MAX_WIDTH){  // Verifica se ainda há livro e se não ocupou toda a estante
             sorted->actualWidth[shelf] += all->book->width;
             put(sorted, j * QNT + shelf, all->book);
             j++;
@@ -361,15 +280,25 @@ bs *sortAlphaWidth(bs *original){
 }
 
 int main(){
+    lib *library = NULL; // Cria uma biblioteca
     bs *bs = create_bs(); // Cria uma estante
 
     printf("Estante Original:\n");
-    inputBooks(bs); // ler o arquivo e colocar na estante
-    printTable(bs); 
+    library = inputBooks(library);
 
+    lib *aux = library;
+    while(aux != NULL){
+        printShelf(aux->bookshelfs);
+        aux = aux->next;
+    }
+
+    aux = library;
     printf("Estante Ordenada Alfabeticamente:\n");
-    bs = sortAlphaWidth(bs);
-    printTable(bs); 
+    while (aux != NULL) {
+        bs = sortAlphaWidth(aux->bookshelfs);
+        printShelf(bs);
+        aux = aux->next;
+    }
 
     return 0;
 }
